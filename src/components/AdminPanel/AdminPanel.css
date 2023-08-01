@@ -1,0 +1,11 @@
+.sticky-left {
+  position: -webkit-sticky;
+  /* Safari */
+  position: sticky;
+  top: 0;
+}
+
+.dropup button {
+  background: transparent;
+  border: none;
+}

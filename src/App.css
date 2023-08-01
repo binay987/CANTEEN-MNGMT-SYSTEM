@@ -1,0 +1,14 @@
+.card {
+  width: 18rem;
+  background-color: #fff !important;
+  border: none !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, .1), 0 8px 16px rgba(0, 0, 0, .1);
+  box-sizing: border-box;
+}
+
+.card:hover {
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+  transition: box-shadow 0.3s ease-in-out!important;
+
+}
