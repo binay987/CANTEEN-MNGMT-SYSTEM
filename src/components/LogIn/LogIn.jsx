@@ -1,15 +1,38 @@
+import axios from 'axios';
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 
 export default function LogIn() {
-
+    const navigate = useNavigate();
     const [credentials,setCredentials] = useState({username:'', password:''});
+    const [viewError, setViewError] = useState(null)
 
     const onChange = (e) => {
         setCredentials({...credentials, [e.target.name]: e.target.value});
     }
-    const host ="localhost:4000/api/fetch/user"
     const handleLoginSubmit = async (e) => {
-        e.preventDefault();
+        e.preventDefault();  // no refresh of page
+        axios.post('http://localhost:5000/api/signin', {Id:credentials.username, Password: credentials.password})
+        .then(function(response){
+            if(response.data.success) {
+                if(response.data.isAdmin){
+                    navigate('/admin')
+                }
+                else {
+                    localStorage.setItem('name',response.data.name)
+                    localStorage.setItem('token',response.data.token)
+                    localStorage.setItem('balance',response.data.balance)
+                    navigate('/user')
+                }
+            }
+            else{
+                setViewError('User Id or password incorrect')
+            }
+        })
+        .catch(function(error){
+            setViewError('Login Failed')
+        })
+
         
     }
     return (
@@ -31,6 +54,7 @@ export default function LogIn() {
                     {/* Username: {credentials.username}<br/>
                     Password: {credentials.password} */}
                 </form>
+                <h4 className='text-center text-danger'>{viewError}</h4>
             </div>
         </>
     )

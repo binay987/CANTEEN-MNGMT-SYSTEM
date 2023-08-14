@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Tu from "../../assets/Tu.png";
 import icon from "../../assets/icon.png";
 import { ButtonGroup, Card, Dropdown, DropdownButton } from "react-bootstrap";
@@ -9,15 +9,62 @@ import Button from 'react-bootstrap/Button';
 import "./AdminPanel.css";
 import Cards from '../Cards/Cards';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {items, users} from '../../datas';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 
 export default function AdminPanel() {
+  const navigate = useNavigate()
+    //Check if Looged in 
+    useEffect(()=>{
+      if(!localStorage.getItem('token'))
+        navigate('/')
+    },[])
 
   const [addItem, setAddItem] = useState(true);
   const [updateItem, setUpdateItem] = useState(false);
   const [deleteItem, setDeleteItem] = useState(false);
   const [viewUser, setViewUser] = useState(false);
+
+
+  //add item
+  const [viewMessage, setViewMessage] = useState(null)
+  const [credentials, setCredentials] = useState({id:'',category:'',name:'',image:'',price:''})
+  const onChange = (e) => {
+    setCredentials({...credentials, [e.target.name]: e.target.value});
+}
+const handleAdd = (e) => {
+  e.preventDefault();
+  axios.post('http://localhost:5000/api/add_item',{item_id:credentials.id, item_name:credentials.name, image:credentials.image.split(/(\\|\/)/g).pop(), category:credentials.category, price:credentials.price})
+  .then(function(response){
+  setCredentials({id:'',category:'',name:'',image:'',price:''})
+    setViewMessage(response.data.message)
+    setTimeout(() => {
+      window.location.reload()
+    }, 2000);
+  })
+  .catch(function(error){
+    setViewMessage("Internal Server Error Occurred")
+  })
+}
+
+  //Fetch Item
+  const [items, setItems] = useState([])
+  useEffect(()=>{
+    axios.post('http://localhost:5000/api/fetch_item',{})
+    .then(function(response){
+      setItems(response.data.data)
+    })
+  },[])
+
+    //Fetch User
+    const [users, setUsers] = useState([])
+    useEffect(()=>{
+      axios.post('http://localhost:5000/api/userdetails',{})
+      .then(function(response){
+        setUsers(response.data)
+      })
+    },[])
 
   const profile_button = (
     <a class="text-white text-decoration-none">
@@ -89,41 +136,41 @@ export default function AdminPanel() {
 
             {addItem &&
               <>
-                <Form>
+                <Form onSubmit={handleAdd}>
                   <Row className="mb-3">
                     <Form.Group as={Col} controlId="formGridName">
-                      <Form.Label>Food Name</Form.Label>
-                      <Form.Control type="name" placeholder="Enter Food" />
+                      <Form.Label>Food ID</Form.Label>
+                      <Form.Control type="name" placeholder="Enter Food" name="id" onChange={onChange} value={credentials.id} />
                     </Form.Group>
 
                     <Form.Group as={Col} controlId="formGridInfo">
-                      <Form.Label>Food Dietary Info</Form.Label>
-                      <Form.Control type="text" placeholder="Suitable for: Non-vegetarian/Vegeterian" />
+                      <Form.Label>Category</Form.Label>
+                      <Form.Control type="text" placeholder="Suitable for: Non-vegetarian/Vegeterian" name="category" onChange={onChange} value={credentials.category} />
                     </Form.Group>
                   </Row>
 
                   <Form.Group className="mb-3" controlId="formGridDescription">
-                    <Form.Label>Food Description</Form.Label>
-                    <Form.Control placeholder="A juicy patty topped with melted cheese, fresh lettuce, tomatoes, and special sauce." />
+                    <Form.Label>Food Name</Form.Label>
+                    <Form.Control placeholder="A juicy patty topped with melted cheese, fresh lettuce, tomatoes, and special sauce." name="name" onChange={onChange} value={credentials.name} />
                   </Form.Group>
 
                   <Form.Group controlId="formFile" className="mb-3">
                     <Form.Label>Food Image</Form.Label>
-                    <Form.Control type="file" />
+                    <Form.Control type="file" name="image" onChange={onChange} value={credentials.image} />
                   </Form.Group>
 
                   <Row className="mb-3">
                     <Form.Group as={Col} controlId="formGridPrice">
                       <Form.Label>Price</Form.Label>
-                      <Form.Control placeholder="Full plate price" />
+                      <Form.Control placeholder="Price" name="price" onChange={onChange} value={credentials.price}/>
                     </Form.Group>
+                    {/* {credentials.id}
+                    {credentials.category}
+                    {credentials.name}
+                    {credentials.image.split(/(\\|\/)/g).pop()}
+                    {credentials.price} */}
 
-                    <Form.Group as={Col} controlId="formGridPrice">
-                      <Form.Label>Price</Form.Label>
-                      <Form.Control placeholder="Half plate price" />
-                    </Form.Group>
-
-                    <Form.Group as={Col} controlId="formGridTime">
+                    {/* <Form.Group as={Col} controlId="formGridTime">
                       <Form.Label>Preparation time</Form.Label>
                       <Form.Select defaultValue="Choose...">
                         <option>5 min</option>
@@ -131,21 +178,14 @@ export default function AdminPanel() {
                         <option>15 min</option>
                         <option>20 min</option>
                         <option>25 min</option>
-                      </Form.Select>
-                    </Form.Group>
+                      </Form.Select> 
+                      </Form.Group>*/}
 
 
                   </Row>
-
-                  <Form.Group className="mb-3" id="formGridCheckbox">
-                    <Form.Check type="checkbox" label="Check me out" />
-                  </Form.Group>
-
-                  <Button variant="info" type="submit">
-                    Add to Cart
-                  </Button>
+                  <button type="submit" class="btn btn-primary mt-3">Add</button>
                 </Form>
-
+                <h3 className='text-center text-success'>{viewMessage}</h3>
               </>
             }
 
@@ -155,12 +195,11 @@ export default function AdminPanel() {
                 <Row xs={1} md={3} className="m-4">
                   {items.map(item => (
                     <div key={item.id} className="p-3">
-                      <Cards id={item.id} image={item.image} name={item.name} price={item.price} unit={item.unit} update={true}/>
+                      <Cards id={item.item_id} image={item.image} category={item.category} name={item.item_name} price={item.price} update={true}/>
                     </div>
                   ))}
                 </Row>
               </>
-
             }
 
             {deleteItem &&
@@ -168,13 +207,8 @@ export default function AdminPanel() {
                 <h2>Remove Item form the Canteen list</h2>
                 <Row xs={1} md={3} className="m-4">
                   {items.map(item => (
-
-                    <div key={item.id} className="p-3">
-                     
-                      
-                      <Cards id={item.id} image={item.image} name={item.name} price={item.price} unit={item.unit} delete={true} />
-
-
+                    <div key={item.id} className="p-3">     
+                      <Cards id={item.item_id} image={item.image} category={item.category} name={item.item_name} price={item.price} delete={true} />
                     </div>
                   ))}
                 </Row>
@@ -185,10 +219,10 @@ export default function AdminPanel() {
               <>
                 <h2>Users</h2>
                 <div className='m-4 p-4'>
-                  <div className="filter-by">
+                  {/* <div className="filter-by">
                     <p className="m-1 fw-bold">Batch:</p>
                     <select class="form-select w-25" aria-label="Select Batch">
-                      <option selected>Select Batch</option>
+                      <option selected onChange={}>Select Batch</option>
                       <option value="1">2075</option>
                       <option value="2">2076</option>
                       <option value="3">2077</option>
@@ -204,7 +238,7 @@ export default function AdminPanel() {
                       <option value="3">2078</option>
                       <option value="3">2079</option>
                     </select>
-                  </div>
+                  </div> */}
                   <table class="table table-striped table-hover">
                     <thead>
                       <tr>
@@ -220,7 +254,7 @@ export default function AdminPanel() {
                           <td>{user.id}</td>
                           <td>{user.name}</td>
                           <td>{user.batch}</td>
-                          <td>{user.faculty}</td>
+                          <td>{user.department}</td>
                         </tr>
                       ))}
                     </tbody>
