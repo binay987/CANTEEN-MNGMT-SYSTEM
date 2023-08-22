@@ -16,12 +16,18 @@ export default function LogIn() {
         .then(function(response){
             if(response.data.success) {
                 if(response.data.isAdmin){
+                    localStorage.setItem('token',response.data.token)
+                    localStorage.setItem('id',response.data.Id)
+                    localStorage.setItem('name',response.data.Name)
+                    localStorage.setItem('isAdmin',response.data.isAdmin)
                     navigate('/admin')
                 }
                 else {
-                    localStorage.setItem('name',response.data.name)
                     localStorage.setItem('token',response.data.token)
+                    localStorage.setItem('id',response.data.Id)
+                    localStorage.setItem('name',response.data.Name)
                     localStorage.setItem('balance',response.data.balance)
+                    localStorage.setItem('isAdmin',response.data.isAdmin)
                     navigate('/user')
                 }
             }

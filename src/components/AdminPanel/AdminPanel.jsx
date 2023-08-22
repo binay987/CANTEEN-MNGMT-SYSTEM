@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import Tu from "../../assets/Tu.png";
 import icon from "../../assets/icon.png";
-import { ButtonGroup, Card, Dropdown, DropdownButton } from "react-bootstrap";
+import { ButtonGroup, Dropdown, DropdownButton } from "react-bootstrap";
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
 import "./AdminPanel.css";
 import Cards from '../Cards/Cards';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -15,56 +14,67 @@ import { useNavigate } from 'react-router-dom';
 
 export default function AdminPanel() {
   const navigate = useNavigate()
-    //Check if Looged in 
-    useEffect(()=>{
-      if(!localStorage.getItem('token'))
-        navigate('/')
-    },[])
+  //Check if Looged in 
+  useEffect(() => {
+    if (!localStorage.getItem('token'))
+      navigate('/')
+    else {
+      if (localStorage.getItem('isAdmin') === 'false')
+        navigate('/user')
+    }
+  }, [])
+
+  const handleLogout = () => {
+    localStorage.removeItem('token')
+    localStorage.removeItem('id')
+    localStorage.removeItem('name')
+    localStorage.removeItem('isAdmin')
+    navigate('/')
+  }
 
   const [addItem, setAddItem] = useState(true);
   const [updateItem, setUpdateItem] = useState(false);
   const [deleteItem, setDeleteItem] = useState(false);
   const [viewUser, setViewUser] = useState(false);
+  const [choosePastOrders, setChoosePastOrders] = useState(false);
 
 
   //add item
   const [viewMessage, setViewMessage] = useState(null)
-  const [credentials, setCredentials] = useState({id:'',category:'',name:'',image:'',price:''})
+  const [credentials, setCredentials] = useState({ id: '', category: '', name: '', image: '', price: '', unit: '' })
   const onChange = (e) => {
-    setCredentials({...credentials, [e.target.name]: e.target.value});
-}
-const handleAdd = (e) => {
-  e.preventDefault();
-  axios.post('http://localhost:5000/api/add_item',{item_id:credentials.id, item_name:credentials.name, image:credentials.image.split(/(\\|\/)/g).pop(), category:credentials.category, price:credentials.price})
-  .then(function(response){
-  setCredentials({id:'',category:'',name:'',image:'',price:''})
-    setViewMessage(response.data.message)
-    setTimeout(() => {
-      window.location.reload()
-    }, 2000);
-  })
-  .catch(function(error){
-    setViewMessage("Internal Server Error Occurred")
-  })
-}
+    setCredentials({ ...credentials, [e.target.name]: e.target.value });
+  }
+  const handleAdd = (e) => {
+    e.preventDefault();
+    axios.post('http://localhost:5000/api/add_item', { item_id: credentials.id, item_name: credentials.name, image: credentials.image.split(/(\\|\/)/g).pop(), category: credentials.category, price: credentials.price, unit: credentials.unit })
+      .then(function (response) {
+        setCredentials({ id: '', category: '', name: '', image: '', price: '', unit: '' })
+        setViewMessage(response.data.message)
+        window.location.reload()
+      })
+      .catch(function (error) {
+        setViewMessage("Internal Server Error Occurred")
+      })
+  }
 
   //Fetch Item
   const [items, setItems] = useState([])
-  useEffect(()=>{
-    axios.post('http://localhost:5000/api/fetch_item',{})
-    .then(function(response){
-      setItems(response.data.data)
-    })
-  },[])
-
-    //Fetch User
-    const [users, setUsers] = useState([])
-    useEffect(()=>{
-      axios.post('http://localhost:5000/api/userdetails',{})
-      .then(function(response){
-        setUsers(response.data)
+  useEffect(() => {
+    axios.get('http://localhost:5000/api/fetch_item')
+      .then(function (response) {
+        setItems(response.data.data)
       })
-    },[])
+  }, [])
+
+  //Fetch User
+  const [users, setUsers] = useState([])
+  useEffect(() => {
+    axios.get('http://localhost:5000/api/userdetails')
+      .then(function (response) {
+        setUsers(response.data.data)
+      })
+  }, [])
 
   const profile_button = (
     <a class="text-white text-decoration-none">
@@ -88,28 +98,33 @@ const handleAdd = (e) => {
                 <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
                   <li class="nav-item">
                     <a href="#" class="nav-link align-middle px-0">
-                      <FontAwesomeIcon icon="fa-solid fa-plus" className='text-white fs-5' /> <span class="ms-1 d-none d-sm-inline" onClick={() => { setAddItem(true); setUpdateItem(false); setDeleteItem(false); setViewUser(false); }}>Add item</span>
+                      <FontAwesomeIcon icon="fa-solid fa-plus" className='text-white fs-5' /> <span class="ms-1 d-none d-sm-inline" onClick={() => { setAddItem(true); setUpdateItem(false); setDeleteItem(false); setViewUser(false); setChoosePastOrders(false); }}>Add item</span>
                     </a>
                   </li>
 
                   <li class="nav-item">
                     <a href="#" class="nav-link align-middle px-0">
-                      <FontAwesomeIcon icon="fa-solid fa-pen" className='text-white fs-6'/><span class="ms-1 d-none d-sm-inline" onClick={() => { setUpdateItem(true); setAddItem(false); setDeleteItem(false); setViewUser(false); }}>Update item</span>
+                      <FontAwesomeIcon icon="fa-solid fa-pen" className='text-white fs-6' /><span class="ms-1 d-none d-sm-inline" onClick={() => { setUpdateItem(true); setAddItem(false); setDeleteItem(false); setViewUser(false); setChoosePastOrders(false); }}>Update item</span>
                     </a>
                   </li>
 
                   <li class="nav-item">
                     <a href="#" class="nav-link align-middle px-0">
-                      <FontAwesomeIcon icon="fa-sharp fa-trash" className='text-white fs-6' /><span class="ms-1 d-none d-sm-inline" onClick={() => { setDeleteItem(true); setAddItem(false); setUpdateItem(false); setViewUser(false); }}>Delete item</span>
+                      <FontAwesomeIcon icon="fa-sharp fa-trash" className='text-white fs-6' /><span class="ms-1 d-none d-sm-inline" onClick={() => { setDeleteItem(true); setAddItem(false); setUpdateItem(false); setViewUser(false); setChoosePastOrders(false); }}>Delete item</span>
                     </a>
                   </li>
 
                   <li class="nav-item">
                     <a href="#" class="nav-link align-middle px-0">
-                      <FontAwesomeIcon icon="fa-regular fa-user" className='text-white fs-6' /><span class="ms-1 d-none d-sm-inline" onClick={() => { setViewUser(true); setAddItem(false); setUpdateItem(false); setDeleteItem(false); }}>View All Users</span>
+                      <FontAwesomeIcon icon="fa-regular fa-user" className='text-white fs-6' /><span class="ms-1 d-none d-sm-inline" onClick={() => { setViewUser(true); setAddItem(false); setUpdateItem(false); setDeleteItem(false); setChoosePastOrders(false); }}>View All Users</span>
                     </a>
                   </li>
 
+                  <li class="nav-item">
+                    <a href="#" class="nav-link align-middle px-0">
+                      <FontAwesomeIcon icon="fa-solid fa-cart-shopping" className='text-white fs-5' /><span class="ms-1 d-none d-sm-inline" onClick={() => { setChoosePastOrders(true); setViewUser(false); setAddItem(false); setUpdateItem(false); setDeleteItem(false); }}> Today's Orders</span>
+                    </a>
+                  </li>
                 </ul>
                 <hr />
 
@@ -123,9 +138,9 @@ const handleAdd = (e) => {
                     variant="secondary"
                     title={profile_button}
                   >
-                    <Dropdown.Item eventKey="1">Name</Dropdown.Item>
+                    <Dropdown.Item eventKey="1" className='text-dark'>{localStorage.getItem('name')}</Dropdown.Item>
                     <Dropdown.Divider />
-                    <Dropdown.Item eventKey="4">Log Out</Dropdown.Item>
+                    <Dropdown.Item eventKey="4" onClick={handleLogout} className='text-dark'>Log Out</Dropdown.Item>
                   </DropdownButton>
                 </div>
 
@@ -162,7 +177,12 @@ const handleAdd = (e) => {
                   <Row className="mb-3">
                     <Form.Group as={Col} controlId="formGridPrice">
                       <Form.Label>Price</Form.Label>
-                      <Form.Control placeholder="Price" name="price" onChange={onChange} value={credentials.price}/>
+                      <Form.Control placeholder="Price" name="price" onChange={onChange} value={credentials.price} />
+                    </Form.Group>
+
+                    <Form.Group as={Col} controlId="formGridUnit">
+                      <Form.Label>Unit</Form.Label>
+                      <Form.Control placeholder="per plate.." name="unit" onChange={onChange} value={credentials.unit} />
                     </Form.Group>
                     {/* {credentials.id}
                     {credentials.category}
@@ -195,7 +215,7 @@ const handleAdd = (e) => {
                 <Row xs={1} md={3} className="m-4">
                   {items.map(item => (
                     <div key={item.id} className="p-3">
-                      <Cards id={item.item_id} image={item.image} category={item.category} name={item.item_name} price={item.price} update={true}/>
+                      <Cards id={item.item_id} image={item.image} category={item.category} name={item.item_name} price={item.price} unit={item.unit} update={true} />
                     </div>
                   ))}
                 </Row>
@@ -207,8 +227,8 @@ const handleAdd = (e) => {
                 <h2>Remove Item form the Canteen list</h2>
                 <Row xs={1} md={3} className="m-4">
                   {items.map(item => (
-                    <div key={item.id} className="p-3">     
-                      <Cards id={item.item_id} image={item.image} category={item.category} name={item.item_name} price={item.price} delete={true} />
+                    <div key={item.id} className="p-3">
+                      <Cards id={item.item_id} image={item.image} category={item.category} name={item.item_name} price={item.price} unit={item.unit} delete={true} />
                     </div>
                   ))}
                 </Row>
@@ -257,6 +277,34 @@ const handleAdd = (e) => {
                           <td>{user.department}</td>
                         </tr>
                       ))}
+                    </tbody>
+                  </table>
+                </div>
+              </>
+            }
+
+            {choosePastOrders &&
+              <>
+                <h2>Past Orders</h2>
+                <div className='m-4 p-4'>
+                  <table class="table table-striped table-hover">
+                    <thead>
+                      <tr>
+                        <th>Roll no</th>
+                        <th>Name</th>
+                        <th>Batch</th>
+                        <th>Faculty</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {/* {users.map(user => (
+                        <tr key={user.id}>
+                          <td>{user.id}</td>
+                          <td>{user.name}</td>
+                          <td>{user.batch}</td>
+                          <td>{user.department}</td>
+                        </tr>
+                      ))} */}
                     </tbody>
                   </table>
                 </div>

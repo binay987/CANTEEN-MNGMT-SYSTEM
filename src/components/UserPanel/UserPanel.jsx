@@ -1,8 +1,5 @@
-
-import { Row } from 'react-bootstrap'
-// import { items } from '../../datas'
+import { Modal, Row } from 'react-bootstrap'
 import Cards from '../Cards/Cards'
-import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import React, { useEffect, useState } from 'react'
 import Tu from "../../assets/Tu.png";
@@ -20,26 +17,65 @@ export default function UserPanel() {
   const [chooseBreakfast, setChooseBreakfast] = useState(true);
   const [chooseLaunch, setChooseLaunch] = useState(false);
   const [chooseSnacks, setChooseSnacks] = useState(false);
+  const [choosePastOrders, setChoosePastOrders] = useState(false);
 
   const handleLogOut = () => {
     localStorage.removeItem('token')
     localStorage.removeItem('id')
     localStorage.removeItem('name')
     localStorage.removeItem('balance')
+    localStorage.removeItem('isAdmin')
     navigate('/')
   }
 
 
   //Check if Looged in 
-  useEffect(()=>{
-    if(!localStorage.getItem('token'))
+  useEffect(() => {
+    if (!localStorage.getItem('token'))
       navigate('/')
-  },[])
+    else {
+      if (localStorage.getItem('isAdmin') === 'true')
+        navigate('/admin')
+    }
+  }, [])
 
-  //Fetch items
+  //Balance
+  const [availableBalance, setAvailableBalance] = useState(0)
+  const [balance, setBalance] = useState({ amount: 0 })
+  const [balanceLoadErrorMessage, setBalanceLoadErrorMessage] = useState(null)
+  const onChangeBalance = (e) => {
+    setBalance({ ...balance, [e.target.name]: e.target.value })
+  }
+  const updateBalance = (e) => {
+    e.preventDefault()
+    axios.post('http://localhost:5000/api/load_balance', { token: localStorage.getItem('token'), amount: balance.amount })
+      .then(function (response) {
+        if (response.data.success) {
+          setBalance({ amount: 0 })
+          var new_balance = parseInt(localStorage.getItem('balance')) + parseInt(balance.amount)
+          console.log(new_balance)
+          localStorage.setItem('balance', new_balance)
+          setAvailableBalance(new_balance)
+          handleBalanceLoadClose()
+        }
+        else
+          setBalanceLoadErrorMessage('Error while Loading amount !')
+      })
+      .catch(function (error) {
+        setBalanceLoadErrorMessage('Internal Server Error !')
+      })
+  }
+
+  //Balance Load Modal
+  const [balanceLoadShow, setBalanceLoadShow] = useState(false);
+  const handleBalanceLoadClose = () => setBalanceLoadShow(false);
+  const handleBalanceLoadShow = () => setBalanceLoadShow(true);
+
+
+  //Fetch items and balance
   const [viewError, setViewError] = useState(null)
   useEffect(() => {
-    axios.post('http://localhost:5000/api/fetch_item', {})
+    axios.get('http://localhost:5000/api/fetch_item', {})
       .then(function (response) {
         console.log(response)
         if (response.data.success) {
@@ -52,36 +88,34 @@ export default function UserPanel() {
       .catch(function (error) {
         setViewError('Unable to Fetch Items. Internal Server Error')
       })
+    setAvailableBalance(localStorage.getItem('balance'))
   }, [])
 
   //Search
-  const [credentials, setCredentials] = useState({search:''})
+  const [credentials, setCredentials] = useState({ search: '' })
   const onChange = (e) => {
-    setCredentials({...credentials, [e.target.name]: e.target.value});
+    setCredentials({ ...credentials, [e.target.name]: e.target.value })
     console.log(credentials.search)
-    axios.post('http://localhost:5000/api/search',{keyword: credentials.search})
-    .then(function(response){
-      setItems(response.data.data)
-    })
-    if(credentials.search.length<=3)
-    {
-      axios.post('http://localhost:5000/api/fetch_item', {})
+    axios.post('http://localhost:5000/api/search', { keyword: credentials.search })
       .then(function (response) {
-        console.log(response)
-        if (response.data.success) {
-          setItems(response.data.data)
-        }
-        else {
-          setViewError('Unable to Fetch Items')
-        }
+        setItems(response.data.data)
       })
-      .catch(function (error) {
-        setViewError('Unable to Fetch Items. Internal Server Error')
-      })
+    if (credentials.search.length <= 3) {
+      axios.get('http://localhost:5000/api/fetch_item', {})
+        .then(function (response) {
+          console.log(response)
+          if (response.data.success) {
+            setItems(response.data.data)
+          }
+          else {
+            setViewError('Unable to Fetch Items')
+          }
+        })
+        .catch(function (error) {
+          setViewError('Unable to Fetch Items. Internal Server Error')
+        })
     }
-}
-
-
+  }
 
   const profile_button = (
     <a class="text-white text-decoration-none">
@@ -105,19 +139,25 @@ export default function UserPanel() {
                 <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
                   <li class="nav-item">
                     <a href="#" class="nav-link align-middle px-0">
-                      <FontAwesomeIcon icon="fa-solid fa-mug-hot" className='text-white fs-5' /> <span class="ms-1 d-none d-sm-inline" onClick={() => { setChooseBreakfast(true); setChooseLaunch(false); setChooseSnacks(false); }}>Breakfast</span>
+                      <FontAwesomeIcon icon="fa-solid fa-mug-hot" className='text-white fs-5' /> <span class="ms-1 d-none d-sm-inline" onClick={() => { setChooseBreakfast(true); setChooseLaunch(false); setChooseSnacks(false); setChoosePastOrders(false); }}>Breakfast</span>
                     </a>
                   </li>
 
                   <li class="nav-item">
                     <a href="#" class="nav-link align-middle px-0">
-                      <FontAwesomeIcon icon="fa-solid fa-utensils" className='text-white fs-5' /><span class="ms-1 d-none d-sm-inline" onClick={() => { setChooseLaunch(true); setChooseBreakfast(false); setChooseSnacks(false); }}>Launch</span>
+                      <FontAwesomeIcon icon="fa-solid fa-utensils" className='text-white fs-5' /><span class="ms-1 d-none d-sm-inline" onClick={() => { setChooseLaunch(true); setChooseBreakfast(false); setChooseSnacks(false); setChoosePastOrders(false); }}> Launch</span>
                     </a>
                   </li>
 
                   <li class="nav-item">
                     <a href="#" class="nav-link align-middle px-0">
-                      <FontAwesomeIcon icon="fa-solid fa-burger" className='text-white fs-5' /><span class="ms-1 d-none d-sm-inline" onClick={() => { setChooseSnacks(true); setChooseBreakfast(false); setChooseLaunch(false); }}>Snacks</span>
+                      <FontAwesomeIcon icon="fa-solid fa-burger" className='text-white fs-5' /><span class="ms-1 d-none d-sm-inline" onClick={() => { setChooseSnacks(true); setChooseBreakfast(false); setChooseLaunch(false); setChoosePastOrders(false); }}> Snacks</span>
+                    </a>
+                  </li>
+
+                  <li class="nav-item">
+                    <a href="#" class="nav-link align-middle px-0">
+                      <FontAwesomeIcon icon="fa-solid fa-cart-shopping" className='text-white fs-5' /><span class="ms-1 d-none d-sm-inline" onClick={() => { setChoosePastOrders(true); setChooseSnacks(false); setChooseBreakfast(false); setChooseLaunch(false); }}> My Past Orders</span>
                     </a>
                   </li>
                 </ul>
@@ -132,9 +172,9 @@ export default function UserPanel() {
                     variant="secondary"
                     title={profile_button}
                   >
-                    <Dropdown.Item eventKey="1">{localStorage.getItem('name')}</Dropdown.Item>
+                    <Dropdown.Item eventKey="1" className='text-dark'>{localStorage.getItem('name')}</Dropdown.Item>
                     <Dropdown.Divider />
-                    <Dropdown.Item eventKey="4" onClick={handleLogOut}>Log Out</Dropdown.Item>
+                    <Dropdown.Item eventKey="4" onClick={handleLogOut} className='text-dark'>Log Out</Dropdown.Item>
                   </DropdownButton>
                 </div>
 
@@ -143,18 +183,20 @@ export default function UserPanel() {
           </div>
           <div class="col p-5">
             <div className='top-container pl-2 pr-2'>
-              <h5 className='available-balance'>Available Balance: Rs. {localStorage.getItem('balance')}</h5>
-              <div className='d-flex flex-row'>
-                <div class="input-group w-50">
-                  <input type="text" class="form-control" placeholder="Search for item" name="search" onChange={onChange} value={credentials.search} />
-                  <div class="input-group-append">
-                    <button class="btn btn-secondary" type="button">
-                      <i class="fa fa-search"></i>
-                    </button>
+              <h5 className='available-balance'>Available Balance: Rs. {availableBalance}</h5>
+              <div className='d-flex flex-row justify-content-end'>
+                {!choosePastOrders &&
+                  <div class="input-group w-50">
+                    <input type="text" class="form-control" placeholder="Search for item" name="search" onChange={onChange} value={credentials.search} />
+                    <div class="input-group-append">
+                      <button class="btn btn-secondary" type="button">
+                        <i class="fa fa-search"></i>
+                      </button>
+                    </div>
                   </div>
-                </div>
+                }
                 <div className='d-flex justify-content-end w-50'>
-                  <button className='btn btn-success'>Load Balance</button>
+                  <button className='btn btn-success' onClick={handleBalanceLoadShow}>Load Balance</button>
                 </div>
               </div>
             </div>
@@ -167,7 +209,7 @@ export default function UserPanel() {
                       {
                         item.category === 'Breakfast' ?
                           <div key={item.item_id} className="p-3">
-                            <Cards id={item.item_id} image={item.image} name={item.item_name} price={item.price} buy={true} />
+                            <Cards id={item.item_id} image={item.image} name={item.item_name} price={item.price} unit={item.unit} buy={true} />
                           </div>
                           :
                           <></>
@@ -175,7 +217,7 @@ export default function UserPanel() {
                     </>
                   ))}
                 </Row>
-
+                <h4 className='text-center text-danger'>{viewError}</h4>
               </>
             }
 
@@ -189,7 +231,7 @@ export default function UserPanel() {
                       {
                         item.category === 'Lunch' ?
                           <div key={item.item_id} className="p-3">
-                            <Cards id={item.item_id} image={item.image} name={item.item_name} price={item.price} buy={true} />
+                            <Cards id={item.item_id} image={item.image} name={item.item_name} price={item.price} unit={item.unit} buy={true} />
                           </div>
                           :
                           <></>
@@ -197,6 +239,7 @@ export default function UserPanel() {
                     </>
                   ))}
                 </Row>
+                <h4 className='text-center text-danger'>{viewError}</h4>
               </>
 
             }
@@ -209,7 +252,7 @@ export default function UserPanel() {
                       {
                         item.category === 'Snacks' ?
                           <div key={item.item_id} className="p-3">
-                            <Cards id={item.item_id} image={item.image} name={item.item_name} price={item.price} buy={true} />
+                            <Cards id={item.item_id} image={item.image} name={item.item_name} price={item.price} unit={item.unit} buy={true} />
                           </div>
                           :
                           <></>
@@ -217,14 +260,65 @@ export default function UserPanel() {
                     </>
                   ))}
                 </Row>
+                <h4 className='text-center text-danger'>{viewError}</h4>
               </>
             }
-            <h4 className='text-center text-danger'>{viewError}</h4>
+
+            {choosePastOrders &&
+              <>
+                <h2>Past Orders</h2>
+                <div className='m-4 p-4'>
+                  <table class="table table-striped table-hover">
+                    <thead>
+                      <tr>
+                        <th>Roll no</th>
+                        <th>Name</th>
+                        <th>Batch</th>
+                        <th>Faculty</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {/* {users.map(user => (
+                        <tr key={user.id}>
+                          <td>{user.id}</td>
+                          <td>{user.name}</td>
+                          <td>{user.batch}</td>
+                          <td>{user.department}</td>
+                        </tr>
+                      ))} */}
+                    </tbody>
+                  </table>
+                </div>
+              </>
+            }
 
           </div>
         </div>
-      </div>    
-      </>
+      </div>
+
+
+      <Modal show={balanceLoadShow} onHide={handleBalanceLoadClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Load Balance</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <form onSubmit={updateBalance}>
+            <label class="form-label fs-5">Enter Amount to Load</label>
+            <input type="number" className='form-control' name="amount" onChange={onChangeBalance} value={balance.amount} />
+            <div className='mt-3 text-center'>
+              <button className='btn btn-success w-25' type='submit'>Load</button>
+            </div>
+          </form>
+          <h4 className='text-center text-danger'>{balanceLoadErrorMessage}</h4>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleBalanceLoadClose}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+    </>
   )
 }
 

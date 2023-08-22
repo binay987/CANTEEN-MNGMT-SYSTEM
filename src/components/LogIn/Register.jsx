@@ -3,27 +3,32 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 
 export default function Register() {
-    const [credentials,setCredentials] = useState({id:'',name:'', department:'',batch:'', password:''});
+    const [credentials, setCredentials] = useState({ id: '', name: '', department: '', batch: '', password: '' });
     const navigate = useNavigate()
-    const [viewError,setViewError] = useState(null)
+    const [viewError, setViewError] = useState(null)
 
     const onChange = (e) => {
-        setCredentials({...credentials, [e.target.name]: e.target.value});
+        setCredentials({ ...credentials, [e.target.name]: e.target.value });
     }
-    const handleSignUpSubmit=async(e)=>{
+    const handleSignUpSubmit = async (e) => {
         e.preventDefault()
-        axios.post('http://localhost:5000/api/signup',{Id:credentials.id,Name:credentials.name,Department:credentials.department,Batch:credentials.batch, Password: credentials.password})
-        .then(function(response){
-            if(response.data.success){
-                localStorage.setItem('token',response.data.token)
-                localStorage.setItem('id',response.data.Id)
-                localStorage.setItem('balance',response.data.Balance)
-                navigate('/user')
-            }
-        })
-        .catch(function(error){
-            setViewError('Server error')
-        })
+        axios.post('http://localhost:5000/api/signup', { Id: credentials.id, Name: credentials.name, Department: credentials.department, Batch: credentials.batch, Password: credentials.password })
+            .then(function (response) {
+                if (response.data.success) {
+                    localStorage.setItem('token', response.data.token)
+                    localStorage.setItem('id', response.data.Id)
+                    localStorage.setItem('name', response.data.Name)
+                    localStorage.setItem('balance', response.data.Balance)
+                    localStorage.setItem('isAdmin', response.data.isAdmin)
+                    navigate('/user')
+                }
+                else {
+                    setViewError(response.data.message)
+                }
+            })
+            .catch(function (error) {
+                setViewError('Server error')
+            })
     }
     return (
         <>
@@ -51,7 +56,7 @@ export default function Register() {
                         <input type="password" class="form-control" name="password" placeholder="Enter password" value={credentials.password} onChange={onChange} />
                     </div>
                     <div className='text-center'>
-                    <button type="submit" class="btn btn-primary mt-3">Sign up</button>
+                        <button type="submit" class="btn btn-primary mt-3">Sign up</button>
                     </div>
                     {/* Username: {credentials.username}<br/>
                     Password: {credentials.password} */}

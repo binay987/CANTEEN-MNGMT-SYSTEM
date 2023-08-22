@@ -8,12 +8,25 @@ import { Card, Tab, Tabs } from "react-bootstrap";
 import Canteen from "../../assets/canteen.jpg";
 import TopBar from "../TopBar/TopBar";
 import Register from "../LogIn/Register";
-
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function () {
 
   //For signup and signin tabs
   const [key, setKey] = useState('login');
+
+  const navigate = useNavigate();
+
+  useEffect(()=>{
+    if(localStorage.getItem('token'))
+    {
+      if(localStorage.getItem('isAdmin'))
+        navigate('/admin')
+      else
+        navigate('/user')
+    }
+  },[])
 
   return (
     <section className="homepage">

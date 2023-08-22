@@ -9,7 +9,7 @@ export default function TopBar() {
         <tr>
           <td><img src={Tu} alt="TU" className="logo" /></td>
           <td><h1>Tribhuwan University</h1>
-            <p><em>IOE, <strong><a href="/admin">Pulchowk Campus</a> </strong> </em> </p>
+            <p><em>IOE, <strong>Pulchowk Campus</strong> </em> </p>
           </td>
         </tr>
       </table>

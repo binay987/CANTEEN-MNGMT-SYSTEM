@@ -10,5 +10,27 @@
 .card:hover {
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
   transition: box-shadow 0.3s ease-in-out!important;
+}
 
+a:link {
+  color: white;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+/* visited link */
+a:visited {
+  color: white;
+}
+
+/* mouse over link */
+a:hover {
+  color: white;
+  opacity: 0.8;;
+}
+
+/* selected link */
+a:active {
+  color: white;
+  opacity: 0.8;;
 }
