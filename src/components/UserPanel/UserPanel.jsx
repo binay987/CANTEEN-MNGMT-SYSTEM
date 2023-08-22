@@ -1,10 +1,8 @@
-import { Modal, Row } from 'react-bootstrap'
+import { Row } from 'react-bootstrap'
 import Cards from '../Cards/Cards'
-import Button from 'react-bootstrap/Button';
 import React, { useEffect, useState } from 'react'
 import Tu from "../../assets/Tu.png";
 import icon from "../../assets/icon.png";
-import Col from 'react-bootstrap/Col';
 import { ButtonGroup, Card, Dropdown, DropdownButton } from "react-bootstrap";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './UserPanel.css'
@@ -41,35 +39,6 @@ export default function UserPanel() {
 
   //Balance
   const [availableBalance, setAvailableBalance] = useState(0)
-  const [balance, setBalance] = useState({ amount: 0 })
-  const [balanceLoadErrorMessage, setBalanceLoadErrorMessage] = useState(null)
-  const onChangeBalance = (e) => {
-    setBalance({ ...balance, [e.target.name]: e.target.value })
-  }
-  const updateBalance = (e) => {
-    e.preventDefault()
-    axios.post('http://localhost:5000/api/load_balance', { token: localStorage.getItem('token'), amount: balance.amount })
-      .then(function (response) {
-        if (response.data.success) {
-          setBalance({ amount: 0 })
-          var new_balance = parseInt(localStorage.getItem('balance')) + parseInt(balance.amount)
-          console.log(new_balance)
-          localStorage.setItem('balance', new_balance)
-          setAvailableBalance(new_balance)
-          handleBalanceLoadClose()
-        }
-        else
-          setBalanceLoadErrorMessage('Error while Loading amount !')
-      })
-      .catch(function (error) {
-        setBalanceLoadErrorMessage('Internal Server Error !')
-      })
-  }
-
-  //Balance Load Modal
-  const [balanceLoadShow, setBalanceLoadShow] = useState(false);
-  const handleBalanceLoadClose = () => setBalanceLoadShow(false);
-  const handleBalanceLoadShow = () => setBalanceLoadShow(true);
 
 
   //Fetch items and balance
@@ -206,7 +175,7 @@ export default function UserPanel() {
                   </div>
                 }
                 <div className='d-flex justify-content-end w-50'>
-                  <button className='btn btn-success' onClick={handleBalanceLoadShow}>Load Balance</button>
+                  {/* <button className='btn btn-success' onClick={handleBalanceLoadShow}>Load Balance</button> */}
                 </div>
               </div>
             </div>
@@ -309,28 +278,6 @@ export default function UserPanel() {
           </div>
         </div>
       </div>
-
-
-      <Modal show={balanceLoadShow} onHide={handleBalanceLoadClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Load Balance</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <form onSubmit={updateBalance}>
-            <label class="form-label fs-5">Enter Amount to Load</label>
-            <input type="number" className='form-control' name="amount" onChange={onChangeBalance} value={balance.amount} />
-            <div className='mt-3 text-center'>
-              <button className='btn btn-success w-25' type='submit'>Load</button>
-            </div>
-          </form>
-          <h4 className='text-center text-danger'>{balanceLoadErrorMessage}</h4>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleBalanceLoadClose}>
-            Close
-          </Button>
-        </Modal.Footer>
-      </Modal>
 
     </>
   )

@@ -41,15 +41,15 @@ export default function Register() {
                     </div>
                     <div class="mb-3 mt-3">
                         <label for="campus id" class="form-label fw-bold">Name:</label>
-                        <input type="campus id" class="form-control" name="name" placeholder="Enter campus id e.g:0777BEI55" onChange={onChange} value={credentials.name} />
+                        <input type="campus id" class="form-control" name="name" placeholder="Enter your Name" onChange={onChange} value={credentials.name} />
                     </div>
                     <div class="mb-3 mt-3">
                         <label for="campus id" class="form-label fw-bold">Department:</label>
-                        <input type="campus id" class="form-control" name="department" placeholder="Enter campus id e.g:0777BEI55" onChange={onChange} value={credentials.department} />
+                        <input type="campus id" class="form-control" name="department" placeholder="Enter your Department" onChange={onChange} value={credentials.department} />
                     </div>
                     <div class="mb-3 mt-3">
                         <label for="campus id" class="form-label fw-bold">Batch:</label>
-                        <input type="campus id" class="form-control" name="batch" placeholder="Enter campus id e.g:0777BEI55" onChange={onChange} value={credentials.batch} />
+                        <input type="campus id" class="form-control" name="batch" placeholder="Enter Batch" onChange={onChange} value={credentials.batch} />
                     </div>
                     <div class="mb-3">
                         <label for="pwd" class="form-label fw-bold">Password:</label>

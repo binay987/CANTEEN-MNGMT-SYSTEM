@@ -2,8 +2,8 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost
--- Generation Time: Aug 22, 2023 at 12:38 PM
+-- Host: 127.0.0.1
+-- Generation Time: Aug 22, 2023 at 06:38 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `Canteen`
+-- Database: `canteen`
 --
 
 -- --------------------------------------------------------
@@ -62,8 +62,8 @@ CREATE TABLE `customer_info` (
 --
 
 INSERT INTO `customer_info` (`id`, `name`, `department`, `batch`, `available_balance`, `update_time`) VALUES
-('077BEI016', 'Binaya Basnet', 'ECE', 77, 910, '2023-08-22 10:23:57'),
-('077BEI017', 'Binit K.C', 'ECE', 77, 850, '2023-08-22 10:24:20');
+('077BEI016', 'Binaya Basnet', 'ECE', 77, 950, '2023-08-22 10:23:57'),
+('077BEI017', 'Binit K.C', 'ECE', 77, 1820, '2023-08-22 10:24:20');
 
 -- --------------------------------------------------------
 
@@ -101,6 +101,7 @@ CREATE TABLE `order_details` (
   `order_id` int(11) NOT NULL,
   `id` varchar(20) NOT NULL,
   `item_id` varchar(20) NOT NULL,
+  `item_name` varchar(50) NOT NULL,
   `quantity` int(11) NOT NULL,
   `total_price` int(11) NOT NULL,
   `update_time` timestamp NOT NULL DEFAULT current_timestamp()
@@ -110,12 +111,10 @@ CREATE TABLE `order_details` (
 -- Dumping data for table `order_details`
 --
 
-INSERT INTO `order_details` (`order_id`, `id`, `item_id`, `quantity`, `total_price`, `update_time`) VALUES
-(20, '077BEI016', 'S_01', 2, 1000, '2023-08-21 10:34:15'),
-(21, '077BEI016', 'B_02', 3, 60, '2023-08-22 10:34:37'),
-(23, '077BEI017', 'L_01', 4, 120, '2023-08-22 10:35:30'),
-(24, '077BEI016', 'L_01', 1, 30, '2023-08-22 10:35:47'),
-(25, '077BEI017', 'S_02', 2, 30, '2023-08-22 10:36:04');
+INSERT INTO `order_details` (`order_id`, `id`, `item_id`, `item_name`, `quantity`, `total_price`, `update_time`) VALUES
+(26, '077BEI017', 'S_02', 'Samosa', 6, 90, '2023-08-22 15:47:19'),
+(27, '077BEI017', 'B_02', 'Milk Tea', 2, 40, '2023-08-22 15:50:59'),
+(29, '077BEI016', 'B_01', 'Black Tea', 4, 60, '2023-08-22 16:28:07');
 
 -- --------------------------------------------------------
 
@@ -180,7 +179,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `order_details`
 --
 ALTER TABLE `order_details`
-  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

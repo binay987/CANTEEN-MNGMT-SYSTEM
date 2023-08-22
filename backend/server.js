@@ -405,11 +405,12 @@ server.post('/api/buy', async (rqst, rspn) => {
 });
 
 //Load balance
-server.post('/api/admin/load_balance', authenticateToken, async (rqst, rspn) => {
+server.post('/api/admin/load_balance', async (rqst, rspn) => {
   const { UserId, amount } = rqst.body;
   try {
     db.execute('UPDATE customer_info SET available_balance= available_balance + ? WHERE id= ?', [amount, UserId])
       .then(result => {
+        console.log("Balance Loaded")
         rspn.json({ success: true });
       })
       .catch(err => {
