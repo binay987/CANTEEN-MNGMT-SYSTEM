@@ -76,6 +76,15 @@ export default function AdminPanel() {
       })
   }, [])
 
+  //Fetch Order
+  const [orders, setOrders] = useState([])
+  useEffect(()=> {
+    axios.get('http://localhost:5000/api/admin/order_details')
+    .then(function(response) {
+      setOrders(response.data.data)
+    })
+  },[])
+
   const profile_button = (
     <a class="text-white text-decoration-none">
       <img src={icon} alt="hugenerd" width="30" height="30" class="rounded-circle" />
@@ -285,26 +294,30 @@ export default function AdminPanel() {
 
             {choosePastOrders &&
               <>
-                <h2>Past Orders</h2>
+                <h2>Today's Orders</h2>
                 <div className='m-4 p-4'>
                   <table class="table table-striped table-hover">
                     <thead>
                       <tr>
-                        <th>Roll no</th>
-                        <th>Name</th>
-                        <th>Batch</th>
-                        <th>Faculty</th>
+                        <th>Order ID</th>
+                        <th>ID</th>
+                        <th>Item ID</th>
+                        <th>Quantity</th>
+                        <th>Total Price</th>
+                        <th>Time</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {/* {users.map(user => (
-                        <tr key={user.id}>
+                      {orders.map(user => (
+                        <tr key={user.order_id}>
+                          <td>{user.order_id}</td>
                           <td>{user.id}</td>
-                          <td>{user.name}</td>
-                          <td>{user.batch}</td>
-                          <td>{user.department}</td>
+                          <td>{user.item_id}</td>
+                          <td>{user.quantity}</td>
+                          <td>{user.total_price}</td>
+                          <td>{user.update_time}</td>
                         </tr>
-                      ))} */}
+                      ))}
                     </tbody>
                   </table>
                 </div>

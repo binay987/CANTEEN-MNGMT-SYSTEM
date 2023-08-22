@@ -2,8 +2,8 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Aug 22, 2023 at 05:35 AM
+-- Host: localhost
+-- Generation Time: Aug 22, 2023 at 12:38 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `canteen`
+-- Database: `Canteen`
 --
 
 -- --------------------------------------------------------
@@ -40,14 +40,7 @@ CREATE TABLE `admin_info` (
 --
 
 INSERT INTO `admin_info` (`id`, `name`, `address`, `phone`, `update_time`) VALUES
-('070BEI119', 'Binnu Basnet', 'yetai tira katai', 9875928452, '2023-08-14 08:27:46'),
-('070BEI120', 'Binnu Basnet', 'yetai tira katai', 9875928452, '2023-08-14 08:30:57'),
-('070BEI121', 'Binnu Basnet', 'yetai tira katai', 9875928452, '2023-08-14 08:31:39'),
-('070BEI122', 'Binnu Basnet', 'yetai tira katai', 9875928452, '2023-08-14 08:34:16'),
-('070BEI123', 'Binnu Basnet', 'yetai tira katai', 9875928452, '2023-08-14 08:36:16'),
-('070BEI188', 'Binnu Basnet', 'yetai tira katai', 9875928452, '2023-08-14 08:37:50'),
-('admin', 'Ram KC', 'Kohalpur', 9816585478, '2023-08-20 13:51:00'),
-('STAFF1', 'Jitendra Manandhar', 'Jawlakhel - 13 - Lalitpur', 9834523761, '2023-08-14 08:13:41');
+('admin', 'Dasharath Kandel', 'Kathmandu', 99898878, '2023-08-22 10:27:01');
 
 -- --------------------------------------------------------
 
@@ -69,22 +62,8 @@ CREATE TABLE `customer_info` (
 --
 
 INSERT INTO `customer_info` (`id`, `name`, `department`, `batch`, `available_balance`, `update_time`) VALUES
-('062BEI02', 'Mehdi Hassan', 'Mechanical Engineering', 62, 0, '2023-08-14 08:14:20'),
-('070BEI02', 'Binit Kc', 'Mechanical Engineering', 70, 0, '2023-08-14 08:14:20'),
-('070BEI112', 'Binay Basnet', 'Mechanical Engineering', 70, 0, '2023-08-14 08:14:20'),
-('070BEI113', 'Binaay Basnet', 'Mechanical Engineering', 70, 0, '2023-08-14 08:14:20'),
-('070BEI114', 'Binnu Basnet', 'Mechanical Engineering', 70, 0, '2023-08-14 08:14:20'),
-('070BEI115', 'Binnu Basnet', 'Mechanical Engineering', 70, 0, '2023-08-14 08:14:20'),
-('070BEI116', 'Binnu Basnet', 'Mechanical Engineering', 70, 0, '2023-08-14 08:14:20'),
-('070BEI117', 'Binnu Basnet', 'Mechanical Engineering', 70, 0, '2023-08-14 08:14:20'),
-('070BEI118', 'Binnu Basnet', 'Mechanical Engineering', 70, 0, '2023-08-14 08:14:20'),
-('070BEI119', 'Binnu Basnet', 'Mechanical Engineering', 70, 0, '2023-08-14 08:15:08'),
-('070BEI200', 'Binnu Basnet', 'Mechanical Engineering', 70, 0, '2023-08-14 08:36:51'),
-('070BEI201', 'Binnu Basnet', 'Mechanical Engineering', 70, 0, '2023-08-14 08:37:35'),
-('077BEI017', 'Binit K.C', 'ECE', 77, 100, '2023-08-20 13:50:30'),
-('077BEI019', 'Ashim Panthi', 'DOECE', 77, 0, '2023-08-14 08:14:20'),
-('077BEI020', 'Insaph Angdemebe', 'Civil Engineering', 77, 0, '2023-08-14 08:14:20'),
-('077BEI021', 'Kunal Kamra', 'BArch', 77, 0, '2023-08-14 08:14:20');
+('077BEI016', 'Binaya Basnet', 'ECE', 77, 910, '2023-08-22 10:23:57'),
+('077BEI017', 'Binit K.C', 'ECE', 77, 850, '2023-08-22 10:24:20');
 
 -- --------------------------------------------------------
 
@@ -107,6 +86,7 @@ CREATE TABLE `items` (
 
 INSERT INTO `items` (`item_id`, `item_name`, `image`, `category`, `price`, `unit`) VALUES
 ('B_01', 'Black Tea', 'blackT.jpg', 'Breakfast', 15, 'per glass'),
+('B_02', 'Milk Tea', 'milkT.jpg', 'Breakfast', 20, 'per glass'),
 ('L_01', 'Parautha', 'parautha.jpg', 'Lunch', 30, 'per piece'),
 ('S_01', 'Pizza', 'pizza.jpg', 'Snacks', 500, 'per plate'),
 ('S_02', 'Samosa', 'samosa.jpg', 'Snacks', 15, 'per piece');
@@ -131,8 +111,11 @@ CREATE TABLE `order_details` (
 --
 
 INSERT INTO `order_details` (`order_id`, `id`, `item_id`, `quantity`, `total_price`, `update_time`) VALUES
-(2, '077BEI019', 'samosa_01', 5, 100, '2023-08-20 13:30:00'),
-(3, '077BEI019', 'samosa_01', 5, 100, '2023-08-20 13:31:27');
+(20, '077BEI016', 'S_01', 2, 1000, '2023-08-21 10:34:15'),
+(21, '077BEI016', 'B_02', 3, 60, '2023-08-22 10:34:37'),
+(23, '077BEI017', 'L_01', 4, 120, '2023-08-22 10:35:30'),
+(24, '077BEI016', 'L_01', 1, 30, '2023-08-22 10:35:47'),
+(25, '077BEI017', 'S_02', 2, 30, '2023-08-22 10:36:04');
 
 -- --------------------------------------------------------
 
@@ -151,28 +134,9 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `hashed_password`, `role`) VALUES
-('062BEI02', '$2b$10$gM2t9yUg893MT01OZi2HJuGJd75HFsDEhG0hKs38fDZeiUM6PHK0S', 'customer'),
-('070BEI02', '$2b$10$/BSVYB6I1HgF0aM7obP/j.m/lBTGxLZzWnKzgwG/Z7YTbew/eCley', 'admin'),
-('070BEI112', '$2b$10$lkzeo4Fdx.SGDMcN14qV1OSv9sdi40DeXzSYMJm5VXmMkVzidtWpC', 'customer'),
-('070BEI113', '$2b$10$0oHlDF3ZaRmTBBa70DZar.BcwhWPuaA7jfmTOiBIepE/J1hnLTJcO', 'customer'),
-('070BEI114', '$2b$10$MeethCX3.Uh0obvP/9vDQuuM6PuNREzKFQA3hTTCdBXk29wF7oLbO', 'customer'),
-('070BEI115', '$2b$10$Va5RhU8F31Ft8SGphCI1NeJsepBqrKAiVmooXypj1dQ2RLkowRky2', 'customer'),
-('070BEI116', '$2b$10$YfCdSmhwwYF1YEbl0E7ckOVtmbsLncxz43yJtBQkBQU/vQ5egOY3.', 'customer'),
-('070BEI117', '$2b$10$oODnFej7BaR.nGJWrJSBU.DrXIWUaMiKmVJ2z1t2h7QSgb9BqclDu', 'customer'),
-('070BEI118', '$2b$10$q.VEb6ICS.5CIJhhh0q6X.sQvs6C74jYXeJlZ9ZlhYe3Ojqu51v2S', 'customer'),
-('070BEI119', '$2b$10$ZjgHIrmRX7f1GN9ZnVGbL.CIdpJ9UX1k2JEaMW6v.3dPxtxA4Xv/a', 'customer'),
-('070BEI120', '$2b$10$5mX9yB4cAslQrSRxKPN0F./3mF23y9v4T6hHcYgh9NyHZC.Jz531.', 'admin'),
-('070BEI121', '$2b$10$C3O2Q8fwCiE5R6sUynetF.AWQXClVyU7KMafJmHYg2FWgH5cBKeMW', 'admin'),
-('070BEI122', '$2b$10$udMrnl85R1AVtJceWsGnR.NPef1lekZQpyT64m3871LZnses9Kama', 'admin'),
-('070BEI123', '$2b$10$z7WrVJlI1isAHoI6XUdYaeBQcXB/KXd0X3CJVHPM8xAyikR2GvE6a', 'admin'),
-('070BEI188', '$2b$10$CSsa2YwK1bpP20W2OW5doOP0.6kPzw4ueQuOSJwxUQdNWmVh4t/7W', 'admin'),
-('070BEI200', '$2b$10$p9PnwDJTltrXLbJE0.mD1uH5w9o8E8EWFuI7f8CAJ.Oj3eoGEd4Oq', 'customer'),
-('070BEI201', '$2b$10$0D0R0gVH7R5aktZjKrhMjeS/UXTYNVPGG35lDqqeP8IAazJLudOfu', 'customer'),
-('077BEI017', '$2b$10$oseTJqSK8dwZH.s3JR3/0enzal8loZ9ptwxDqMhneqJudz2hn9i4W', 'customer'),
-('077BEI019', '$2b$10$7cizfSpd5P9IgujYYpKbk.ZbU8ZGi8i/hnaukCOAym4z0CSQElAYm', 'customer'),
-('077BEI020', '$2b$10$gjoQddwB5z7a426Eei71Oe5Ei.UCn6qXnj9Lu6wG8KzUVf80ghkFa', 'customer'),
-('077BEI021', '$2b$10$tIdDQjXaF9e5XaUVEyWh/.dz9V/./TGNIsaK7nj4ZUf3V.6dWxvS.', 'customer'),
-('admin', '$2b$10$BWIF2Sp8uotFRyhoivVRFueTU3Ti2YuCkbcUVu2CWRpVhh3oT9tU6', 'admin');
+('077BEI016', '$2b$10$RWlBsNE8.5hq8Gr9cxT5lOS1QnGeZTcKTORnYesABj/u5yBxlGV..', 'customer'),
+('077BEI017', '$2b$10$ATEhKbJeqsmyH5s3hQG7XObYL4fBlB.Cb/8l69MupkuS46V.wP9US', 'customer'),
+('admin', '$2b$10$PrU6EWb8U5HUOOwcVwlgn.XINj5slHhP0QFkGfj01gGhPUtWDgMuO', 'admin');
 
 --
 -- Indexes for dumped tables
@@ -216,7 +180,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `order_details`
 --
 ALTER TABLE `order_details`
-  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

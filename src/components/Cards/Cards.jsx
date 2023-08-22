@@ -30,8 +30,8 @@ export default function Cards(props) {
   //BUY
   const [placeOrderError, setPlaceOrderError] = useState(false)
   const [balanceError, setBalanceError] = useState(false)
-  const [buyPage, setBuyPage] = useState(false)
-  const [receiptPage, setReceiptPage] = useState(true)
+  const [buyPage, setBuyPage] = useState(true)
+  const [receiptPage, setReceiptPage] = useState(false)
 
   //Modal
   const [show, setShow] = useState(false);
@@ -42,6 +42,7 @@ export default function Cards(props) {
     setBuyPage(true);
     setBalanceError(false);
     setReceiptPage(false);
+    window.location.reload();
   };
   const handleShow = () => setShow(true);
 
@@ -86,13 +87,15 @@ export default function Cards(props) {
 
   const submitBuy = (e) => {
     e.preventDefault();
-    axios.post('http://localhost:5000/api/place_order', { userId: localStorage.getItem('id'), itemId: credentials.id, Quantity: quantity })
+    axios.post('http://localhost:5000/api/place_order', { UserId: localStorage.getItem('id'), ItemId: credentials.id, Quantity: quantity })
       .then(function (response) {
         if (response.data.success) {
           axios.post('http://localhost:5000/api/buy', { token: localStorage.getItem('token'), order_id: response.data.order_id })
             .then(function (response) {
               if (response.data.success) {
-                console.log(response.data)
+                localStorage.setItem('balance',response.data.available_balance)
+                setBuyPage(false)
+                setReceiptPage(true)
               }
               else {
                 setBalanceError(true)

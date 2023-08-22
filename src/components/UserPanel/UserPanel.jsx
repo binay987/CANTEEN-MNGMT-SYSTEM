@@ -117,6 +117,16 @@ export default function UserPanel() {
     }
   }
 
+  //Fetch Past Order
+  const [orders, setOrders] = useState([])
+  useEffect(()=> {
+    axios.post('http://localhost:5000/api/admin/past_orders',{UserId: localStorage.getItem('id')})
+    .then(function(response) {
+      setOrders(response.data.data)
+    })
+  },[])
+
+
   const profile_button = (
     <a class="text-white text-decoration-none">
       <img src={icon} alt="hugenerd" width="30" height="30" class="rounded-circle" />
@@ -271,21 +281,25 @@ export default function UserPanel() {
                   <table class="table table-striped table-hover">
                     <thead>
                       <tr>
-                        <th>Roll no</th>
-                        <th>Name</th>
-                        <th>Batch</th>
-                        <th>Faculty</th>
+                        <th>Order ID</th>
+                        <th>ID</th>
+                        <th>Item ID</th>
+                        <th>Quantity</th>
+                        <th>Total Price</th>
+                        <th>Time</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {/* {users.map(user => (
-                        <tr key={user.id}>
+                      {orders.map(user => (
+                        <tr key={user.order_id}>
+                          <td>{user.order_id}</td>
                           <td>{user.id}</td>
-                          <td>{user.name}</td>
-                          <td>{user.batch}</td>
-                          <td>{user.department}</td>
+                          <td>{user.item_id}</td>
+                          <td>{user.quantity}</td>
+                          <td>{user.total_price}</td>
+                          <td>{user.update_time}</td>
                         </tr>
-                      ))} */}
+                      ))}
                     </tbody>
                   </table>
                 </div>

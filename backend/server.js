@@ -243,6 +243,33 @@ server.get('/api/fetch_item', async (rqst, rspn) => {
   }
 });
 
+//Fetch order details 
+server.get('/api/admin/order_details', async (rqst, rspn) => {
+  try {
+    const [orders] = await db.execute('SELECT * FROM order_details WHERE DATE(update_time) = CURDATE()');
+    rspn.json({ success: true, data: orders });
+  } catch (error) {
+    console.error('Error fetching items:', error);
+    rspn.json({ success: false, message: 'Error while fetching items' });
+  }
+});
+
+
+//Fetch order details 
+server.post('/api/admin/past_orders', async (rqst, rspn) => {
+  try {
+    const {UserId} = rqst.body;
+    const [orders] = await db.execute('SELECT * FROM order_details WHERE id = ?', [UserId]);
+    rspn.json({ success: true, data: orders });
+  } catch (error) {
+    console.error('Error fetching items:', error);
+    rspn.json({ success: false, message: 'Error while fetching items' });
+  }
+});
+
+
+
+
 //Adding an item
 server.post('/api/add_item', async (rqst, rspn) => {
   const { item_id, item_name, image, category, price, unit } = rqst.body;
@@ -368,6 +395,7 @@ server.post('/api/buy', async (rqst, rspn) => {
           rspn.json({ success: false, error: 'Error fetching data' });
         });
     } else {
+      db.execute('DELETE FROM order_details WHERE order_id = ?', [order_id]);
       rspn.json({ success: false, message: 'Insufficient balance' });
     }
   } catch (err) {
@@ -377,7 +405,26 @@ server.post('/api/buy', async (rqst, rspn) => {
 });
 
 //Load balance
-server.post('/api/load_balance', authenticateToken, async (rqst, rspn) => {
+server.post('/api/admin/load_balance', authenticateToken, async (rqst, rspn) => {
+  const { UserId, amount } = rqst.body;
+  try {
+    db.execute('UPDATE customer_info SET available_balance= available_balance + ? WHERE id= ?', [amount, UserId])
+      .then(result => {
+        rspn.json({ success: true });
+      })
+      .catch(err => {
+        console.log(err);
+        rspn.json({ success: false, error: 'Error fetching data' });
+      });
+  } catch (err) {
+    console.error('Error loading balance:', err);
+    rspn.json({ success: false, message: 'Error while loading balance' });
+  }
+});
+
+
+//Load balance for user
+server.post('/api/load_balance', async (rqst, rspn) => {
   const { token, amount } = rqst.body;
   try {
     let decodedToken;
@@ -401,6 +448,7 @@ server.post('/api/load_balance', authenticateToken, async (rqst, rspn) => {
     rspn.json({ success: false, message: 'Error while buying item' });
   }
 });
+
 
 server.use((rqst, rspn, next) => {
   rspn.json({ success: false, message: 'Page not found' });
