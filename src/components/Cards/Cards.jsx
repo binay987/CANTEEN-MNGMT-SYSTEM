@@ -42,7 +42,8 @@ export default function Cards(props) {
     setBuyPage(true);
     setBalanceError(false);
     setReceiptPage(false);
-    window.location.reload();
+    if(receiptPage)
+      window.location.reload()
   };
   const handleShow = () => setShow(true);
 
@@ -87,7 +88,7 @@ export default function Cards(props) {
 
   const submitBuy = (e) => {
     e.preventDefault();
-    axios.post('http://localhost:5000/api/place_order', { UserId: localStorage.getItem('id'), ItemId: credentials.id, Quantity: quantity })
+    axios.post('http://localhost:5000/api/place_order', { UserId: localStorage.getItem('id'), ItemId: credentials.id, ItemName: credentials.name, Quantity: quantity })
       .then(function (response) {
         if (response.data.success) {
           axios.post('http://localhost:5000/api/buy', { token: localStorage.getItem('token'), order_id: response.data.order_id })

@@ -313,13 +313,13 @@ server.post('/api/delete_item', async (rqst, rspn) => {
 
 //Placing an order
 server.post('/api/place_order', async (rqst, rspn) => {
-  const { UserId, ItemId, Quantity } = rqst.body;
+  const { UserId, ItemId, ItemName, Quantity } = rqst.body;
 
   try {
     let [result] = await db.execute('SELECT price FROM items WHERE item_id = ?', [ItemId]);
     [Fitem] = result;
     const TotalPrice = Quantity * Fitem.price;
-    await db.execute('INSERT INTO order_details (id, item_id, quantity, total_price) VALUES (?, ?, ?, ?)', [UserId, ItemId, Quantity, TotalPrice]);
+    await db.execute('INSERT INTO order_details (id, item_id, item_name, quantity, total_price) VALUES (?, ?, ?, ?, ?)', [UserId, ItemId, ItemName, Quantity, TotalPrice]);
     [result] = await db.execute('SELECT * FROM order_details ORDER BY update_time DESC LIMIT 1');
     [Fitem] = result;
     rspn.json({ success: true, message: 'Order placed Successfully', order_id: Fitem.order_id, TotalPrice: Fitem.total_price });

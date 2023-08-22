@@ -282,8 +282,8 @@ export default function UserPanel() {
                     <thead>
                       <tr>
                         <th>Order ID</th>
-                        <th>ID</th>
                         <th>Item ID</th>
+                        <th>Item Name</th>
                         <th>Quantity</th>
                         <th>Total Price</th>
                         <th>Time</th>
@@ -293,8 +293,8 @@ export default function UserPanel() {
                       {orders.map(user => (
                         <tr key={user.order_id}>
                           <td>{user.order_id}</td>
-                          <td>{user.id}</td>
                           <td>{user.item_id}</td>
+                          <td>{user.item_name}</td>
                           <td>{user.quantity}</td>
                           <td>{user.total_price}</td>
                           <td>{user.update_time}</td>
