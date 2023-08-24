@@ -88,12 +88,16 @@ export default function UserPanel() {
 
   //Fetch Past Order
   const [orders, setOrders] = useState([])
-  useEffect(()=> {
-    axios.post('http://localhost:5000/api/admin/past_orders',{UserId: localStorage.getItem('id')})
-    .then(function(response) {
-      setOrders(response.data.data)
-    })
-  },[])
+  useEffect(() => {
+    axios.post('http://localhost:5000/api/admin/past_orders', { UserId: localStorage.getItem('id') })
+      .then(function (response) {
+        setOrders(response.data.data.slice(0)
+          .reverse()
+          .map(element => {
+            return element;
+          }))
+      })
+  }, [])
 
 
   const profile_button = (

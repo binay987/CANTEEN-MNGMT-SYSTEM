@@ -81,7 +81,11 @@ export default function AdminPanel() {
   useEffect(() => {
     axios.get('http://localhost:5000/api/admin/order_details')
       .then(function (response) {
-        setOrders(response.data.data)
+        setOrders(response.data.data.slice(0)
+          .reverse()
+          .map(element => {
+            return element;
+          }))
       })
   }, [])
 
@@ -89,9 +93,9 @@ export default function AdminPanel() {
   //Balance Load Modal
   const [balanceLoadShow, setBalanceLoadShow] = useState(false);
   const [balanceLoadErrorMessage, setBalanceLoadErrorMessage] = useState(null)
-  const handleBalanceLoadClose = () => {setBalanceLoadErrorMessage(null); setBalanceLoadShow(false);}
+  const handleBalanceLoadClose = () => { setBalanceLoadErrorMessage(null); setBalanceLoadShow(false); }
   const handleBalanceLoadShow = () => setBalanceLoadShow(true);
-  const [balance, setBalance] = useState({ id:'', amount: 0 })
+  const [balance, setBalance] = useState({ id: '', amount: 0 })
   const onChangeBalance = (e) => {
     setBalance({ ...balance, [e.target.name]: e.target.value })
   }
@@ -100,7 +104,7 @@ export default function AdminPanel() {
     axios.post('http://localhost:5000/api/admin/load_balance', { UserId: balance.id, amount: balance.amount })
       .then(function (response) {
         if (response.data.success) {
-          setBalance({id:'',amount:0})
+          setBalance({ id: '', amount: 0 })
           setBalanceLoadErrorMessage("Balance Loaded to that account successfully !")
         }
         else
@@ -374,7 +378,7 @@ export default function AdminPanel() {
         </Modal.Header>
         <Modal.Body>
           <form onSubmit={updateBalance}>
-          <label class="form-label fs-5">Enter User ID</label>
+            <label class="form-label fs-5">Enter User ID</label>
             <input type="text" className='form-control' name="id" onChange={onChangeBalance} value={balance.id} />
             <label class="form-label fs-5">Enter Amount to Load</label>
             <input type="number" className='form-control' name="amount" onChange={onChangeBalance} value={balance.amount} />

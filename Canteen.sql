@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 22, 2023 at 06:38 PM
+-- Generation Time: Aug 24, 2023 at 12:03 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -63,7 +63,7 @@ CREATE TABLE `customer_info` (
 
 INSERT INTO `customer_info` (`id`, `name`, `department`, `batch`, `available_balance`, `update_time`) VALUES
 ('077BEI016', 'Binaya Basnet', 'ECE', 77, 950, '2023-08-22 10:23:57'),
-('077BEI017', 'Binit K.C', 'ECE', 77, 1820, '2023-08-22 10:24:20');
+('077BEI017', 'Binit K.C', 'ECE', 77, 1300, '2023-08-22 10:24:20');
 
 -- --------------------------------------------------------
 
@@ -89,7 +89,8 @@ INSERT INTO `items` (`item_id`, `item_name`, `image`, `category`, `price`, `unit
 ('B_02', 'Milk Tea', 'milkT.jpg', 'Breakfast', 20, 'per glass'),
 ('L_01', 'Parautha', 'parautha.jpg', 'Lunch', 30, 'per piece'),
 ('S_01', 'Pizza', 'pizza.jpg', 'Snacks', 500, 'per plate'),
-('S_02', 'Samosa', 'samosa.jpg', 'Snacks', 15, 'per piece');
+('S_02', 'Samosa', 'samosa.jpg', 'Snacks', 15, 'per piece'),
+('S_03', 'Aalu Chop', 'aloo.jpg', 'Snacks', 15, 'per piece');
 
 -- --------------------------------------------------------
 
@@ -114,7 +115,10 @@ CREATE TABLE `order_details` (
 INSERT INTO `order_details` (`order_id`, `id`, `item_id`, `item_name`, `quantity`, `total_price`, `update_time`) VALUES
 (26, '077BEI017', 'S_02', 'Samosa', 6, 90, '2023-08-22 15:47:19'),
 (27, '077BEI017', 'B_02', 'Milk Tea', 2, 40, '2023-08-22 15:50:59'),
-(29, '077BEI016', 'B_01', 'Black Tea', 4, 60, '2023-08-22 16:28:07');
+(29, '077BEI016', 'B_01', 'Black Tea', 4, 60, '2023-08-22 16:28:07'),
+(31, '077BEI017', 'S_01', 'Pizza', 1, 500, '2023-08-23 11:07:34'),
+(32, '077BEI017', 'B_01', 'Black Tea', 2, 30, '2023-08-23 11:07:48'),
+(33, '077BEI017', 'S_03', 'Aalu Chop', 6, 90, '2023-08-24 09:57:23');
 
 -- --------------------------------------------------------
 
@@ -163,7 +167,9 @@ ALTER TABLE `items`
 -- Indexes for table `order_details`
 --
 ALTER TABLE `order_details`
-  ADD PRIMARY KEY (`order_id`);
+  ADD PRIMARY KEY (`order_id`),
+  ADD KEY `id` (`id`),
+  ADD KEY `item_id` (`item_id`);
 
 --
 -- Indexes for table `users`
@@ -179,7 +185,30 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `order_details`
 --
 ALTER TABLE `order_details`
-  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `admin_info`
+--
+ALTER TABLE `admin_info`
+  ADD CONSTRAINT `admin_info_ibfk_1` FOREIGN KEY (`id`) REFERENCES `users` (`id`);
+
+--
+-- Constraints for table `customer_info`
+--
+ALTER TABLE `customer_info`
+  ADD CONSTRAINT `customer_info_ibfk_1` FOREIGN KEY (`id`) REFERENCES `users` (`id`);
+
+--
+-- Constraints for table `order_details`
+--
+ALTER TABLE `order_details`
+  ADD CONSTRAINT `order_details_ibfk_1` FOREIGN KEY (`id`) REFERENCES `customer_info` (`id`),
+  ADD CONSTRAINT `order_details_ibfk_2` FOREIGN KEY (`item_id`) REFERENCES `items` (`item_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
